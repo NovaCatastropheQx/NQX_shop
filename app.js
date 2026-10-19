@@ -1,3 +1,6 @@
+    require("dotenv").config();
+    
+    const MongoStore = require("connect-mongo").default;
     const express = require("express");
     const session = require("express-session");
 
@@ -29,10 +32,24 @@
         })
     );
     // Session
+    // app.use(session({
+    //     // secret: "sdn302-secret-key",
+    //     secret: process.env.SESSION_SECRET,
+    //     resave: false,
+    //     saveUninitialized: false
+    // }));
     app.use(session({
-        secret: "sdn302-secret-key",
+        secret: process.env.SESSION_SECRET,
         resave: false,
-        saveUninitialized: false
+        saveUninitialized: false,
+    
+        store: MongoStore.create({
+            mongoUrl: process.env.MONGO_URI
+        }),
+    
+        cookie: {
+            maxAge: 1000 * 60 * 60
+        }
     }));
     // Authentication Routes
     app.use(authRoutes);
